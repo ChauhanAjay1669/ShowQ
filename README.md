@@ -1,4 +1,4 @@
-# QuickShow - Movie Buying Platform
+# ShowQ - Premium Cinema Booking Platform
 
 A full-stack movie marketplace platform built with the MERN stack (MongoDB, Express, React, Node.js). Users can browse, buy, rent, and download movies while administrators have complete control over content, pricing, categories, users, and payments.
 
@@ -67,8 +67,8 @@ A full-stack movie marketplace platform built with the MERN stack (MongoDB, Expr
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
-cd quickshow
+git clone https://github.com/ChauhanAjay1669/ShowQ.git
+cd ShowQ
 ```
 
 ### 2. Install Dependencies
@@ -129,8 +129,8 @@ npm run seed
 ```
 
 This will create:
-- Admin user: `admin@quickshow.com` / `Admin@123`
-- Test user: `user@quickshow.com` / `User@123`
+- Admin user: `admin@showq.com` / `Admin@123`
+- Test user: `user@showq.com` / `User@123`
 - Sample categories and movies
 
 ### 5. Run the Application
@@ -159,7 +159,7 @@ The application will be available at:
 ## 📁 Project Structure
 
 ```
-quickshow/
+ShowQ/
 ├── client/                 # React frontend
 │   ├── src/
 │   │   ├── components/     # Reusable components
@@ -325,10 +325,14 @@ Cloudinary is used for storing movie posters:
 
 MIT
 
-## 👥 Credits
+## 👥 Author
+
+**Ajay Chauhan**
+- GitHub: [@ChauhanAjay1669](https://github.com/ChauhanAjay1669)
+- Email: chauhanajay1669@gmail.com
 
 Built with ❤️ using MERN Stack
 
 ---
 
-**QuickShow** - India's Premium Movie Buying Platform
+**ShowQ** - Premium Cinema Booking Platform
