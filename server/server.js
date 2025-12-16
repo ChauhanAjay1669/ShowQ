@@ -7,7 +7,6 @@ const errorHandler = require('./middleware/errorHandler');
 const path = require('path');
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '.env') });
-console.log('DEBUG: MONGO_URI is', process.env.MONGO_URI);
 
 // Connect to database
 connectDB();
