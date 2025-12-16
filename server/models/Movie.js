@@ -15,6 +15,11 @@ const movieSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide a poster URL']
     },
+    bannerUrl: {
+        type: String,
+        default: '',
+        trim: true // Optional custom banner URL for hero section
+    },
     videoUrl: {
         type: String,
         default: '',

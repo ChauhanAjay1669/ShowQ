@@ -43,3 +43,19 @@ export const getRatingColor = (rating) => {
     if (rating >= 3) return 'text-yellow-500';
     return 'text-red-500';
 };
+
+// Format duration from minutes to professional format (e.g., 210 -> "3h 30m")
+export const formatDuration = (minutes) => {
+    if (!minutes || minutes === 0) return '';
+
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+
+    if (hours === 0) {
+        return `${mins}m`;
+    } else if (mins === 0) {
+        return `${hours}h`;
+    } else {
+        return `${hours}h ${mins}m`;
+    }
+};

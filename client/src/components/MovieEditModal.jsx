@@ -8,6 +8,7 @@ const MovieEditModal = ({ movie, isOpen, onClose, onUpdate }) => {
         title: '',
         description: '',
         posterUrl: '',
+        bannerUrl: '',
         videoUrl: '',
         genres: '',
         language: '',
@@ -25,10 +26,12 @@ const MovieEditModal = ({ movie, isOpen, onClose, onUpdate }) => {
 
     useEffect(() => {
         if (movie) {
+            // Edit mode - populate with existing movie data
             setFormData({
                 title: movie.title || '',
                 description: movie.description || '',
                 posterUrl: movie.posterUrl || '',
+                bannerUrl: movie.bannerUrl || '',
                 videoUrl: movie.videoUrl || '',
                 genres: Array.isArray(movie.genres) ? movie.genres.join(', ') : '',
                 language: movie.language || '',
@@ -42,8 +45,28 @@ const MovieEditModal = ({ movie, isOpen, onClose, onUpdate }) => {
                 featured: movie.featured || false,
                 trending: movie.trending || false
             });
+        } else {
+            // Create mode - reset to default values
+            setFormData({
+                title: '',
+                description: '',
+                posterUrl: '',
+                bannerUrl: '',
+                videoUrl: '',
+                genres: '',
+                language: '',
+                cast: '',
+                director: '',
+                price: '',
+                offerPrice: '',
+                releaseDate: '',
+                duration: '',
+                status: 'published',
+                featured: false,
+                trending: false
+            });
         }
-    }, [movie]);
+    }, [movie, isOpen]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -67,15 +90,24 @@ const MovieEditModal = ({ movie, isOpen, onClose, onUpdate }) => {
                 duration: Number(formData.duration) || 0
             };
 
-            const { data } = await api.put(`/admin/movies/${movie._id}`, updateData);
+            let data;
+            if (movie) {
+                // Edit existing movie
+                const response = await api.put(`/admin/movies/${movie._id}`, updateData);
+                data = response.data;
+            } else {
+                // Create new movie
+                const response = await api.post('/admin/movies', updateData);
+                data = response.data;
+            }
 
             if (data.success) {
                 onUpdate(data.movie);
                 onClose();
             }
         } catch (error) {
-            console.error('Error updating movie:', error);
-            alert(error.response?.data?.message || 'Failed to update movie');
+            console.error('Error saving movie:', error);
+            alert(error.response?.data?.message || 'Failed to save movie');
         } finally {
             setLoading(false);
         }
@@ -87,7 +119,7 @@ const MovieEditModal = ({ movie, isOpen, onClose, onUpdate }) => {
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h2>Edit Movie</h2>
+                    <h2>{movie ? 'Edit Movie' : 'Add New Movie'}</h2>
                     <button className="modal-close" onClick={onClose}>
                         <FiX size={24} />
                     </button>
@@ -129,6 +161,20 @@ const MovieEditModal = ({ movie, isOpen, onClose, onUpdate }) => {
                                 placeholder="https://..."
                                 required
                             />
+                        </div>
+
+                        <div className="form-group full-width">
+                            <label>Banner URL (Hero Section)</label>
+                            <input
+                                type="url"
+                                name="bannerUrl"
+                                value={formData.bannerUrl}
+                                onChange={handleChange}
+                                placeholder="https://... (Optional wide banner for homepage hero)"
+                            />
+                            <small style={{ color: '#888', display: 'block', marginTop: '4px' }}>
+                                Recommended: 1920x850px for best display. Leave empty to use poster image.
+                            </small>
                         </div>
 
                         <div className="form-group full-width">
@@ -279,7 +325,7 @@ const MovieEditModal = ({ movie, isOpen, onClose, onUpdate }) => {
                             Cancel
                         </button>
                         <button type="submit" className="btn-primary" disabled={loading}>
-                            {loading ? 'Saving...' : 'Save Changes'}
+                            {loading ? 'Saving...' : (movie ? 'Save Changes' : 'Create Movie')}
                         </button>
                     </div>
                 </form>

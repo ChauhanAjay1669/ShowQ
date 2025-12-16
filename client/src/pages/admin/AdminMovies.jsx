@@ -88,7 +88,16 @@ const AdminMovies = () => {
     };
 
     const handleUpdateMovie = (updatedMovie) => {
-        setMovies(movies.map(m => m._id === updatedMovie._id ? updatedMovie : m));
+        // Check if this is a new movie (not in current list) or an update
+        const existingIndex = movies.findIndex(m => m._id === updatedMovie._id);
+
+        if (existingIndex !== -1) {
+            // Update existing movie
+            setMovies(movies.map(m => m._id === updatedMovie._id ? updatedMovie : m));
+        } else {
+            // Add new movie to the list
+            setMovies([updatedMovie, ...movies]);
+        }
     };
 
     const handleCloseEditModal = () => {
@@ -103,6 +112,7 @@ const AdminMovies = () => {
 
     const trendingCount = movies.filter(m => m.trending && m.status === 'published').length;
     const upcomingCount = movies.filter(m => m.status === 'upcoming').length;
+    const featuredCount = movies.filter(m => m.featured && m.status === 'published').length;
 
     if (loading) {
         return <div className="admin-loading">Loading movies...</div>;
@@ -114,10 +124,16 @@ const AdminMovies = () => {
                 <div>
                     <h1>Movie Management</h1>
                     <p className="admin-subtitle">
-                        {trendingCount} trending • {upcomingCount} upcoming • {movies.length} total
+                        {featuredCount} hero featured • {trendingCount} trending • {upcomingCount} upcoming • {movies.length} total
                     </p>
                 </div>
-                <button className="btn-primary">
+                <button
+                    className="btn-primary"
+                    onClick={() => {
+                        setEditingMovie(null);
+                        setIsEditModalOpen(true);
+                    }}
+                >
                     <FiPlus /> Add New Movie
                 </button>
             </div>
@@ -148,6 +164,22 @@ const AdminMovies = () => {
                 >
                     Draft ({movies.filter(m => m.status === 'draft').length})
                 </button>
+            </div>
+
+            {/* Hero Banner Preview */}
+            <div className="homepage-preview" style={{ background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(234, 88, 12, 0.05) 100%)', borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                <h3>🎬 Hero Banner ({featuredCount}/5)</h3>
+                <p>Movies marked as <strong>featured</strong> will appear in the homepage hero carousel</p>
+                {featuredCount === 0 && (
+                    <div className="warning-box">
+                        ⚠️ No featured movies set! Mark up to 5 movies as featured to show in hero banner.
+                    </div>
+                )}
+                {featuredCount > 5 && (
+                    <div className="warning-box" style={{ background: 'rgba(234, 179, 8, 0.1)', borderColor: 'rgba(234, 179, 8, 0.5)' }}>
+                        ⚡ You have {featuredCount} featured movies, but only the first 5 will appear in hero.
+                    </div>
+                )}
             </div>
 
             {/* Homepage Preview */}
@@ -223,10 +255,10 @@ const AdminMovies = () => {
                                         <button
                                             className={`toggle-btn ${movie.featured ? 'active' : ''}`}
                                             onClick={() => toggleFeatured(movie._id, movie.featured)}
-                                            title="Mark as featured"
+                                            title="Show in hero banner"
                                         >
                                             <FiStar />
-                                            {movie.featured ? 'Featured' : 'Set Featured'}
+                                            {movie.featured ? '⭐ Hero' : 'Set Hero'}
                                         </button>
                                     </div>
                                 </td>

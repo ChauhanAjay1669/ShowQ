@@ -2,8 +2,11 @@ const mongoose = require('mongoose');
 const path = require('path');
 const dotenv = require('dotenv');
 
+console.log('🚀 Seed script started...');
+
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '.env') });
+console.log('📝 Environment loaded. MongoURI length:', (process.env.MONGO_URI || '').length);
 
 const Movie = require('./models/Movie');
 const Category = require('./models/Category');
@@ -53,6 +56,8 @@ const movies = [
 
     { title: "Jailer", description: "A retired jailer goes on a manhunt to find his son's killers", posterUrl: "https://image.tmdb.org/t/p/w500/1zJN3YPmmZaUqCaOMUKwY7ksw21.jpg", rating: 4.4, price: 200, offerPrice: 150, language: "Tamil", genres: ["Action", "Comedy"], director: "Nelson Dilipkumar", cast: ["Rajinikanth", "Mohanlal"], releaseDate: new Date("2023-08-10"), videoUrl: "https://www.youtube.com/embed/E3UTVGNllFk" }
 ];
+
+// ... (imports remain)
 
 const seedDatabase = async () => {
     try {

@@ -105,6 +105,7 @@ exports.createMovie = async (req, res, next) => {
             title,
             description,
             posterUrl,
+            bannerUrl,
             videoUrl,
             genres,
             language,
@@ -159,6 +160,7 @@ exports.createMovie = async (req, res, next) => {
             title: title.trim(),
             description: description.trim(),
             posterUrl: posterUrl.trim(),
+            bannerUrl: bannerUrl ? bannerUrl.trim() : '',
             videoUrl: videoUrl ? videoUrl.trim() : '',
             genres: genresArray,
             language: language.trim(),
@@ -229,7 +231,7 @@ exports.updateMovie = async (req, res, next) => {
 
         // Update fields
         const allowedUpdates = [
-            'title', 'description', 'posterUrl', 'videoUrl', 'genres',
+            'title', 'description', 'posterUrl', 'bannerUrl', 'videoUrl', 'genres',
             'language', 'cast', 'director', 'price', 'offerPrice',
             'releaseDate', 'duration', 'featured', 'status'
         ];

@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../store/slices/cartSlice';
 import { toggleWishlist } from '../store/slices/wishlistSlice';
-import { FiStar, FiShoppingCart, FiHeart, FiPlay, FiClock, FiInfo } from 'react-icons/fi';
-import { formatCurrency } from '../utils/helpers';
+import { FiPlay, FiShoppingCart, FiHeart, FiInfo, FiClock } from 'react-icons/fi';
+import { formatCurrency, formatDuration } from '../utils/helpers';
 import TrailerModal from './TrailerModal';
 
 const MovieCard = ({ movie }) => {
@@ -115,7 +115,7 @@ const MovieCard = ({ movie }) => {
                         <div className="absolute bottom-3 left-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/80 border border-white/20">
                                 <FiClock className="w-3.5 h-3.5 text-white" />
-                                <span className="text-white text-xs font-medium">{movie.duration} min</span>
+                                <span className="text-white text-xs font-medium">{formatDuration(movie.duration)}</span>
                             </div>
                         </div>
                     )}

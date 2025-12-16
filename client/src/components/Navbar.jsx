@@ -37,7 +37,7 @@ const Navbar = () => {
                     </div>
 
                     {/* User Actions */}
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-4 bg-black/98">
                         {isAuthenticated ? (
                             <>
                                 <Link to="/wishlist" className="relative hover:text-primary-400 transition">
@@ -56,29 +56,34 @@ const Navbar = () => {
                                         <FiUser className="w-6 h-6" />
                                         <span className="hidden md:inline">{user?.name}</span>
                                     </button>
-                                    <div className="absolute right-0 mt-2 w-48 glass rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                                        <Link to="/profile" className="block px-4 py-2 hover:bg-white/10 rounded-t-lg">
-                                            Profile
-                                        </Link>
-                                        <Link to="/my-library" className="block px-4 py-2 hover:bg-white/10">
-                                            My Library
-                                        </Link>
-                                        <Link to="/order-history" className="block px-4 py-2 hover:bg-white/10">
-                                            Order History
-                                        </Link>
-                                        {user?.role === 'admin' && (
-                                            <Link to="/admin" className="flex items-center space-x-2 px-4 py-2 hover:bg-white/10 text-primary-400">
-                                                <MdAdminPanelSettings className="w-5 h-5" />
-                                                <span>Admin Panel</span>
+                                    <div className="absolute right-0 mt-3 w-56 bg-black backdrop-blur-xl border-2 border-gray-800 rounded-xl shadow-2xl shadow-black opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
+                                        <div className="py-2">
+                                            <Link to="/profile" className="flex items-center px-4 py-3 hover:bg-primary-600/20 hover:text-primary-300 transition-all duration-200 border-b border-white/5">
+                                                <FiUser className="w-4 h-4 mr-3" />
+                                                <span className="font-medium">Profile</span>
                                             </Link>
-                                        )}
-                                        <button
-                                            onClick={handleLogout}
-                                            className="w-full flex items-center space-x-2 px-4 py-2 hover:bg-white/10 rounded-b-lg text-red-400"
-                                        >
-                                            <FiLogOut className="w-5 h-5" />
-                                            <span>Logout</span>
-                                        </button>
+                                            <Link to="/my-library" className="flex items-center px-4 py-3 hover:bg-primary-600/20 hover:text-primary-300 transition-all duration-200 border-b border-white/5">
+                                                <FiFilm className="w-4 h-4 mr-3" />
+                                                <span className="font-medium">My Library</span>
+                                            </Link>
+                                            <Link to="/order-history" className="flex items-center px-4 py-3 hover:bg-primary-600/20 hover:text-primary-300 transition-all duration-200 border-b border-white/5">
+                                                <FiShoppingCart className="w-4 h-4 mr-3" />
+                                                <span className="font-medium">Order History</span>
+                                            </Link>
+                                            {user?.role === 'admin' && (
+                                                <Link to="/admin" className="flex items-center px-4 py-3 hover:bg-primary-600/30 text-primary-400 hover:text-primary-300 transition-all duration-200 border-b border-white/5">
+                                                    <MdAdminPanelSettings className="w-4 h-4 mr-3" />
+                                                    <span className="font-medium">Admin Panel</span>
+                                                </Link>
+                                            )}
+                                            <button
+                                                onClick={handleLogout}
+                                                className="w-full flex items-center px-4 py-3 hover:bg-red-600/20 text-red-400 hover:text-red-300 transition-all duration-200"
+                                            >
+                                                <FiLogOut className="w-4 h-4 mr-3" />
+                                                <span className="font-medium">Logout</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </>

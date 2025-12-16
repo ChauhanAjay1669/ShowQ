@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addToCart } from '../store/slices/cartSlice';
 import { toggleWishlist } from '../store/slices/wishlistSlice';
-import { formatCurrency } from '../utils/helpers';
+import { formatCurrency, formatDuration } from '../utils/helpers';
 
 const TrailerModal = ({ videoUrl, title, isOpen, onClose, movie }) => {
     const dispatch = useDispatch();
@@ -68,266 +68,213 @@ const TrailerModal = ({ videoUrl, title, isOpen, onClose, movie }) => {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md animate-fadeIn overflow-y-auto py-8"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-xl animate-fadeIn p-4 md:p-6"
             onClick={onClose}
         >
             {/* Background Poster with Blur */}
             {movie?.posterUrl && (
                 <div className="fixed inset-0 z-0">
                     <div
-                        className="absolute inset-0 bg-cover bg-center opacity-20 blur-2xl"
+                        className="absolute inset-0 bg-cover bg-center opacity-10 blur-3xl"
                         style={{
                             backgroundImage: `url(${movie.posterUrl})`,
-                            transform: 'scale(1.1)'
+                            transform: 'scale(1.2)'
                         }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/90 to-black/80" />
                 </div>
             )}
 
+            {/* Main Modal Container - Theater Split Mode */}
             <div
-                className="relative z-10 w-full max-w-7xl mx-4 bg-gradient-to-br from-gray-900/95 to-black/95 backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl border border-white/10 transform transition-all duration-500"
+                className="relative z-10 w-full max-w-[98vw] h-[92vh] bg-gray-900/40 backdrop-blur-2xl rounded-3xl overflow-hidden shadow-2xl border border-white/10 flex flex-col lg:flex-row transform transition-all duration-500"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Close Button */}
+                {/* Close Button - Floating */}
                 <button
-                    className="absolute top-6 right-6 z-30 p-3 rounded-full bg-black/80 hover:bg-red-600 text-white transition-all duration-300 hover:scale-110 shadow-xl border border-white/20"
+                    className="absolute top-4 right-4 z-50 p-2.5 rounded-full bg-black/60 hover:bg-red-600 text-white transition-all duration-300 hover:scale-110 shadow-lg border border-white/10 backdrop-blur-md group"
                     onClick={onClose}
                 >
-                    <FiX className="w-6 h-6" />
+                    <FiX className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
                 </button>
 
-                {/* Content */}
-                <div className="flex flex-col lg:flex-row min-h-[600px] max-h-[90vh]">
-                    {/* Left Side - Trailer Video */}
-                    <div className="flex-1 bg-black/40 backdrop-blur-sm flex items-center justify-center p-8 lg:p-12 border-r border-white/5">
-                        <div className="w-full max-w-3xl">
-                            {videoId ? (
-                                <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10">
-                                    <iframe
-                                        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
-                                        title={`${title} Trailer`}
-                                        frameBorder="0"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                        className="w-full h-full"
-                                    ></iframe>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col items-center justify-center text-gray-400 py-20">
-                                    <div className="p-6 bg-white/5 rounded-full mb-6">
-                                        <FiPlay className="w-20 h-20" />
+                {/* Left Section: Video Player (Takes up ~65% width on desktop) */}
+                <div className="flex-grow lg:flex-[2] relative bg-black flex items-center justify-center overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10 group">
+                    {videoId ? (
+                        <div className="w-full h-full relative">
+                            <iframe
+                                src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&showinfo=0&controls=1`}
+                                title={`${title} Trailer`}
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className="absolute inset-0 w-full h-full"
+                            ></iframe>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center text-gray-400">
+                            <div className="p-8 bg-white/5 rounded-full mb-6 animate-pulse">
+                                <FiPlay className="w-20 h-20 opacity-50" />
+                            </div>
+                            <p className="text-2xl font-light tracking-wide">Trailer Unavailable</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Right Section: Sidebar Info Panel (Takes up ~35% width on desktop) */}
+                <div className="w-full lg:w-[500px] xl:w-[550px] flex-shrink-0 bg-gradient-to-b from-gray-900/95 to-black/95 backdrop-blur-md h-[40vh] lg:h-full overflow-y-auto custom-scrollbar flex flex-col">
+                    <div className="p-6 lg:p-8 space-y-6">
+
+                        {/* Title & Quick Stats */}
+                        <div className="space-y-4">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="px-2.5 py-1 bg-red-600 rounded text-white text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-red-600/20">
+                                    Now Playing
+                                </span>
+                                {movie?.language && (
+                                    <span className="px-2.5 py-1 bg-white/10 rounded text-gray-300 text-[10px] uppercase tracking-wider font-medium">
+                                        {movie.language}
+                                    </span>
+                                )}
+                            </div>
+
+                            <h2 className="text-3xl lg:text-4xl font-black text-white leading-tight">
+                                {movie?.title || title}
+                            </h2>
+
+                            <div className="flex flex-wrap items-center gap-4 text-gray-400 text-sm font-medium">
+                                {movie?.rating > 0 && (
+                                    <div className="flex items-center gap-1.5 text-yellow-500">
+                                        <FiStar className="fill-current w-4 h-4" />
+                                        <span className="font-bold text-white text-base">{movie.rating.toFixed(1)}</span>
                                     </div>
-                                    <p className="text-2xl font-semibold">Trailer not available</p>
-                                    <p className="text-sm text-gray-500 mt-2">Check back later for updates</p>
+                                )}
+                                {movie?.duration && (
+                                    <div className="flex items-center gap-1.5">
+                                        <FiClock className="w-4 h-4" />
+                                        <span>{formatDuration(movie.duration)}</span>
+                                    </div>
+                                )}
+                                {movie?.releaseDate && (
+                                    <div className="flex items-center gap-1.5">
+                                        <FiCalendar className="w-4 h-4" />
+                                        <span>{new Date(movie.releaseDate).getFullYear()}</span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="grid grid-cols-2 gap-3">
+                            <button
+                                onClick={handleAddToCart}
+                                className="col-span-2 flex items-center justify-center gap-2 px-6 py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-600/20 hover:shadow-red-600/40 hover:-translate-y-0.5"
+                            >
+                                <FiShoppingCart className="w-5 h-5" />
+                                <span>Buy Ticket</span>
+                            </button>
+
+                            <button
+                                onClick={handleViewDetails}
+                                className="flex items-center justify-center gap-2 px-4 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all border border-white/5 hover:border-white/20"
+                            >
+                                <FiInfo className="w-4 h-4" />
+                                <span>Details</span>
+                            </button>
+
+                            <button
+                                onClick={handleToggleWishlist}
+                                className={`flex items-center justify-center gap-2 px-4 py-3 font-semibold rounded-xl transition-all border ${isInWishlist
+                                    ? 'bg-red-600/20 border-red-500/50 text-red-500'
+                                    : 'bg-white/5 border-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                                    }`}
+                            >
+                                <FiHeart className={`w-4 h-4 ${isInWishlist ? 'fill-current' : ''}`} />
+                                <span>{isInWishlist ? 'Saved' : 'Save'}</span>
+                            </button>
+                        </div>
+
+                        {/* Price Information */}
+                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                            <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-1">Ticket Price</p>
+                            <div className="flex items-baseline gap-3">
+                                <span className="text-4xl font-black text-white">
+                                    {formatCurrency(movie?.offerPrice || movie?.price || 0)}
+                                </span>
+                                {movie?.offerPrice && (
+                                    <span className="text-lg text-gray-500 line-through">
+                                        {formatCurrency(movie.price)}
+                                    </span>
+                                )}
+                            </div>
+                            {movie?.offerPrice && (
+                                <div className="mt-2 text-xs text-green-400 font-medium flex items-center gap-1">
+                                    Save {Math.round((1 - movie.offerPrice / movie.price) * 100)}% on this booking
                                 </div>
                             )}
                         </div>
-                    </div>
 
-                    {/* Right Side - Movie Information */}
-                    <div className="flex-1 bg-gradient-to-b from-gray-900/80 to-gray-950/80 backdrop-blur-sm p-8 lg:p-12 overflow-y-auto custom-scrollbar">
-                        {movie ? (
-                            <div className="space-y-6">
-                                {/* Title */}
-                                <div>
-                                    <div className="inline-block px-4 py-1 bg-red-600/20 rounded-full border border-red-500/30 mb-4">
-                                        <span className="text-red-400 text-xs font-bold uppercase tracking-wider">Now Playing</span>
-                                    </div>
-                                    <h2 className="text-5xl font-black text-white mb-3 leading-tight">
-                                        {movie.title}
-                                    </h2>
-                                    {movie.tagline && (
-                                        <p className="text-gray-400 text-lg italic font-light">"{movie.tagline}"</p>
-                                    )}
-                                </div>
-
-                                {/* Rating & Stats */}
-                                <div className="flex flex-wrap items-center gap-3">
-                                    {movie.rating > 0 && (
-                                        <div className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl border border-yellow-500/40 hover:border-yellow-500/60 transition-colors">
-                                            <FiStar className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-                                            <span className="text-2xl font-bold text-white">{movie.rating.toFixed(1)}</span>
-                                            <span className="text-gray-400 text-sm font-medium">/10</span>
-                                        </div>
-                                    )}
-
-                                    {movie.duration && (<div className="flex items-center gap-2 px-5 py-3 bg-blue-500/20 rounded-xl border border-blue-500/30 hover:bg-blue-500/30 transition-colors">
-                                        <FiClock className="w-4 h-4 text-blue-400" />
-                                        <span className="text-white font-semibold">{movie.duration} min</span>
-                                    </div>
-                                    )}
-
-                                    {movie.releaseDate && (
-                                        <div className="flex items-center gap-2 px-5 py-3 bg-purple-500/20 rounded-xl border border-purple-500/30 hover:bg-purple-500/30 transition-colors">
-                                            <FiCalendar className="w-4 h-4 text-purple-400" />
-                                            <span className="text-white font-semibold">{new Date(movie.releaseDate).getFullYear()}</span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Genres */}
-                                {movie.genres && movie.genres.length > 0 && (
-                                    <div>
-                                        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Genres</h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            {movie.genres.map((genre, index) => (
-                                                <span
-                                                    key={index}
-                                                    className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white text-sm font-semibold rounded-full border border-white/10 hover:border-red-500/50 transition-all cursor-pointer"
-                                                >
-                                                    {genre}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Description */}
-                                {movie.description && (
-                                    <div className="bg-black/40 p-6 rounded-xl border border-white/10">
-                                        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                            <FiInfo className="w-4 h-4" />
-                                            Synopsis
-                                        </h3>
-                                        <p className="text-gray-300 leading-relaxed text-base">{movie.description}</p>
-                                    </div>
-                                )}
-
-                                {/* Cast & Crew */}
-                                {(movie.director || (movie.cast && movie.cast.length > 0)) && (
-                                    <div className="grid grid-cols-1 gap-4 p-6 bg-white/5 rounded-xl border border-white/10">
-                                        {movie.director && (
-                                            <div>
-                                                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Director</h3>
-                                                <p className="text-white font-semibold text-lg">{movie.director}</p>
-                                            </div>
-                                        )}
-                                        {movie.cast && movie.cast.length > 0 && (
-                                            <div>
-                                                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Cast</h3>
-                                                <p className="text-gray-300">{movie.cast.join(', ')}</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-
-                                {/* Language & Release Date */}
-                                <div className="flex flex-wrap gap-4">
-                                    {movie.language && (
-                                        <div>
-                                            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Language</h3>
-                                            <span className="inline-block px-4 py-2 bg-gradient-to-r from-gray-700 to-gray-600 text-white font-semibold rounded-lg shadow-lg">
-                                                {movie.language}
-                                            </span>
-                                        </div>
-                                    )}
-                                    {movie.releaseDate && (
-                                        <div>
-                                            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Release Date</h3>
-                                            <p className="text-white text-lg font-semibold">{formatDate(movie.releaseDate)}</p>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Pricing */}
-                                <div className="pt-6 border-t border-white/10">
-                                    <div className="flex items-end justify-between mb-6">
-                                        <div>
-                                            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Ticket Price</h3>
-                                            {movie.offerPrice ? (
-                                                <div className="flex items-baseline gap-4">
-                                                    <span className="text-5xl font-black bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent">
-                                                        {formatCurrency(movie.offerPrice)}
-                                                    </span>
-                                                    <span className="text-xl text-gray-500 line-through font-medium">
-                                                        {formatCurrency(movie.price)}
-                                                    </span>
-                                                    <div className="px-3 py-1.5 bg-gradient-to-r from-red-600 to-red-500 text-white text-sm font-bold rounded-full shadow-lg">
-                                                        SAVE {Math.round((1 - movie.offerPrice / movie.price) * 100)}%
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <span className="text-5xl font-black bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent">
-                                                    {formatCurrency(movie.price)}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Action Buttons */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                        <button
-                                            onClick={handleViewDetails}
-                                            className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-105 shadow-xl"
-                                        >
-                                            <FiPlay className="w-5 h-5" />
-                                            <span>Details</span>
-                                        </button>
-
-                                        <button
-                                            onClick={handleAddToCart}
-                                            className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-600 text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-105 shadow-xl"
-                                        >
-                                            <FiShoppingCart className="w-5 h-5" />
-                                            <span>Add Cart</span>
-                                        </button>
-
-                                        <button
-                                            onClick={handleToggleWishlist}
-                                            className={`flex items-center justify-center gap-2 px-6 py-4 font-bold rounded-xl transition-all duration-300 transform hover:scale-105 shadow-xl ${isInWishlist
-                                                ? 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-600 text-white'
-                                                : 'bg-red-500/10 hover:bg-gradient-to-r hover:from-red-600 hover:to-red-500 text-red-400 hover:text-white border-2 border-red-600 hover:border-transparent'
-                                                }`}
-                                        >
-                                            <FiHeart className={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`} />
-                                            <span>{isInWishlist ? 'Saved' : 'Wishlist'}</span>
-                                        </button>
-                                    </div>
+                        {/* Genres */}
+                        {movie?.genres && (
+                            <div>
+                                <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-3">Genres</p>
+                                <div className="flex flex-wrap gap-2">
+                                    {movie.genres.map((genre, i) => (
+                                        <span key={i} className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-semibold rounded-lg border border-white/5 transition-colors cursor-default">
+                                            {genre}
+                                        </span>
+                                    ))}
                                 </div>
                             </div>
-                        ) : (
-                            <div className="flex items-center justify-center h-full">
-                                <p className="text-gray-400 text-xl">Movie information not available</p>
+                        )}
+
+                        {/* Synopsis */}
+                        {movie?.description && (
+                            <div>
+                                <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-3">Synopsis</p>
+                                <p className="text-gray-300 text-sm leading-relaxed">
+                                    {movie.description}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Cast */}
+                        {movie?.cast && movie.cast.length > 0 && (
+                            <div>
+                                <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-3">Cast</p>
+                                <p className="text-gray-400 text-sm">
+                                    {movie.cast.join(', ')}
+                                </p>
                             </div>
                         )}
                     </div>
                 </div>
             </div>
-
             <style jsx>{`
                 @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                    }
-                    to {
-                        opacity: 1;
-                    }
+                    from { opacity: 0; transform: scale(0.95); }
+                    to { opacity: 1; transform: scale(1); }
                 }
 
                 .animate-fadeIn {
-                    animation: fadeIn 0.4s ease-out;
+                    animation: fadeIn 0.3s ease-out forwards;
                 }
 
                 .custom-scrollbar::-webkit-scrollbar {
-                    width: 10px;
+                    width: 6px;
                 }
 
                 .custom-scrollbar::-webkit-scrollbar-track {
-                    background: rgba(255, 255, 255, 0.05);
-                    border-radius: 5px;
+                    background: rgba(0, 0, 0, 0.2);
                 }
 
                 .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: linear-gradient(180deg, rgba(239, 68, 68, 0.6), rgba(239, 68, 68, 0.8));
-                    border-radius: 5px;
-                    border: 2px solid transparent;
-                    background-clip: content-box;
+                    background: rgba(255, 255, 255, 0.2);
+                    border-radius: 10px;
                 }
 
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: linear-gradient(180deg, rgba(239, 68, 68, 0.8), rgba(239, 68, 68, 1));
-                    background-clip: content-box;
+                    background: rgba(255, 255, 255, 0.4);
                 }
             `}</style>
         </div>
